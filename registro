@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang='es'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Registro de Usuario</title>
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+        }
+        
+        .container {
+          background: white;
+          border-radius: 15px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+          width: 100%;
+          max-width: 500px;
+          padding: 40px;
+        }
+        
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+        }
+        
+        .header h1 {
+          color: #333;
+          font-size: 28px;
+          margin-bottom: 10px;
+        }
+        
+        .header p {
+          color: #666;
+          font-size: 14px;
+        }
+        
+        .form-group {
+          margin-bottom: 20px;
+        }
+        
+        .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          color: #333;
+          font-weight: 600;
+          font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+          width: 100%;
+          padding: 12px 15px;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 14px;
+          transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+          outline: none;
+          border-color: #667eea;
+        }
+        
+        .form-group input:disabled {
+          background-color: #f5f5f5;
+          cursor: not-allowed;
+        }
+        
+        .btn {
+          width: 100%;
+          padding: 14px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+        
+        .message {
+          padding: 12px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          text-align: center;
+          font-weight: 500;
+        }
+        
+        .message.success {
+          background: #d4edda;
+          color: #155724;
+          border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+          background: #f8d7da;
+          color: #721c24;
+          border: 1px solid #f5c6cb;
+        }
+        
+        .login-link {
+          text-align: center;
+          margin-top: 20px;
+          color: #666;
+          font-size: 14px;
+        }
+        
+        .login-link a {
+          color: #667eea;
+          text-decoration: none;
+          font-weight: 600;
+        }
+        
+        .login-link a:hover {
+          text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Registro de Usuario</h1>
+            <p>Crea tu cuenta para hacer pedidos</p>
+        </div>
+
+        <div id='messageContainer'></div>
+
+        <form id='registroForm'>
+            <div class='form-group'>
+                <label for='useremail'>Correo Electrónico *</label>
+                <input type='email' id='useremail' name='useremail' required placeholder='tu@email.com'>
+            </div>
+
+            <div class='form-group'>
+                <label for='usuario'>Nombre de Usuario *</label>
+                <input type='text' id='usuario' name='usuario' required placeholder='Tu nombre'>
+            </div>
+
+            <div class='form-group'>
+                <label for='contrasena'>Contraseña *</label>
+                <input type='password' id='contrasena' name='contrasena' required placeholder='Mínimo 4 caracteres'>
+            </div>
+
+            <div class='form-group'>
+                <label for='empresa'>Empresa *</label>
+                <select id='empresa' name='empresa' required onchange='cargarAlmacenes()'>
+                    <option value=''>Selecciona una empresa</option>
+                </select>
+            </div>
+
+            <div class='form-group'>
+                <label for='almacen'>Almacén *</label>
+                <select id='almacen' name='almacen' required disabled>
+                    <option value=''>Primero selecciona una empresa</option>
+                </select>
+            </div>
+
+            <button type='submit' class='btn' id='btnRegistrar'>Registrar</button>
+        </form>
+
+        <div class='login-link'>
+            ¿Ya tienes cuenta? <a href='#' onclick='irALogin(); return false;'>Iniciar Sesión</a>
+        </div>
+    </div>
+
+    <script>
+        // Cargar empresas al iniciar
+        google.script.run.withSuccessHandler(cargarEmpresasCallback).obtenerEmpresas();
+        
+        function cargarEmpresasCallback(empresas) {
+          const selectEmpresa = document.getElementById('empresa');
+          empresas.forEach(empresa => {
+            const option = document.createElement('option');
+            option.value = empresa.idEmpresa;
+            option.textContent = empresa.tag;
+            selectEmpresa.appendChild(option);
+          });
+        }
+        
+        // Cargar almacenes al seleccionar empresa
+        function cargarAlmacenes() {
+          const idEmpresa = document.getElementById('empresa').value;
+          const selectAlmacen = document.getElementById('almacen');
+          
+          if (idEmpresa) {
+            selectAlmacen.disabled = true;
+            selectAlmacen.innerHTML = '<option value="">Cargando almacenes...</option>';
+            
+            google.script.run
+              .withSuccessHandler(cargarAlmacenesCallback)
+              .withFailureHandler(mostrarError)
+              .obtenerAlmacenesPorEmpresa(idEmpresa);
+          } else {
+            selectAlmacen.disabled = true;
+            selectAlmacen.innerHTML = '<option value="">Primero selecciona una empresa</option>';
+          }
+        }
+        
+        function cargarAlmacenesCallback(almacenes) {
+          const selectAlmacen = document.getElementById('almacen');
+          
+          if (almacenes.length > 0) {
+            selectAlmacen.innerHTML = '<option value="">Selecciona un almacén</option>';
+            almacenes.forEach(almacen => {
+              const option = document.createElement('option');
+              option.value = almacen.idAlmacen;
+              option.textContent = almacen.nombre;
+              selectAlmacen.appendChild(option);
+            });
+            selectAlmacen.disabled = false;
+          } else {
+            selectAlmacen.innerHTML = '<option value="">No hay almacenes disponibles</option>';
+            selectAlmacen.disabled = true;
+          }
+        }
+        
+        // Manejar registro
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const useremail = document.getElementById('useremail').value.trim();
+          const usuario = document.getElementById('usuario').value.trim();
+          const contrasena = document.getElementById('contrasena').value.trim();
+          const idEmpresa = document.getElementById('empresa').value;
+          const idAlmacen = document.getElementById('almacen').value;
+          
+          // Validaciones
+          if (!useremail || !usuario || !contrasena || !idEmpresa || !idAlmacen) {
+            mostrarMensaje('Por favor completa todos los campos', 'error');
+            return;
+          }
+          
+          if (contrasena.length < 4) {
+            mostrarMensaje('La contraseña debe tener al menos 4 caracteres', 'error');
+            return;
+          }
+          
+          const btnRegistrar = document.getElementById('btnRegistrar');
+          btnRegistrar.disabled = true;
+          btnRegistrar.textContent = 'Registrando...';          
+
+          const datos = {
+          useremail: useremail,
+          usuario: usuario,
+          contrasena: contrasena,
+          idEmpresa: idEmpresa,
+          idAlmacen: idAlmacen,
+          };
+                  
+          google.script.run
+            .withSuccessHandler(registroExitoso)
+            .withFailureHandler(registroFallido)
+            .registrarNuevoUsuario(datos);
+        });
+        
+        function registroExitoso(response) {
+      if (response.success) {
+        // Cargar configuración para obtener la URL real
+        google.script.run
+          .withSuccessHandler(function(config) {
+            const urlCatalogo = config.webUrl || './';
+            
+            // Mostrar mensaje
+            document.getElementById('messageContainer').innerHTML = `
+              <div class='message success'>
+                Su registro fue procesado. Espere por la activación.
+              </div>
+            `;
+            document.getElementById('btnRegistrar').disabled = true;
+            document.getElementById('btnRegistrar').textContent = 'Registrado';
+            
+            // Redirigir después de 3 segundos
+            setTimeout(() => {
+              window.location.href = urlCatalogo;
+            }, 8000); // 5 segundos;
+          })
+          .obtenerConfiguracionWeb();
+      } else {
+        mostrarMensaje(response.message, 'error');
+        document.getElementById('btnRegistrar').disabled = false;
+        document.getElementById('btnRegistrar').textContent = 'Registrar';
+      }
+    }
+    
+        function registroFallido(error) {
+          mostrarMensaje('Error al registrar: ' + error, 'error');
+          document.getElementById('btnRegistrar').disabled = false;
+          document.getElementById('btnRegistrar').textContent = 'Registrar';
+        }
+        
+        function mostrarMensaje(texto, tipo) {
+          const container = document.getElementById('messageContainer');
+          container.innerHTML = `<div class='message ${tipo}'>${texto}</div>`;
+        }
+        
+        function mostrarError(error) {
+          mostrarMensaje('Error: ' + error, 'error');
+          document.getElementById('almacen').disabled = true;
+          document.getElementById('almacen').innerHTML = '<option value="">Error al cargar almacenes</option>';
+        }
+        
+        function irALogin() {
+      // Cargar URL desde configuración
+      google.script.run
+        .withSuccessHandler(function(config) {
+          const urlLogin = (config.webUrl || './') + '?p=Login';
+          window.location.href = urlLogin;
+        })
+        .obtenerConfiguracionWeb();
+    }
+    </script>
+</body>
+
+</html>
