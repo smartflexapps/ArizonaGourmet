@@ -1,0 +1,24 @@
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+body { background-color: #f4f7f6; color: #333; }
+
+header { background: #2c3e50; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+header button { background: #18bc9c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 10px; }
+
+.hidden { display: none !important; }
+.pantalla { padding: 20px; max-width: 1000px; margin: auto; }
+
+.card-form { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: 50px auto; text-align: center; }
+.card-form input, .card-form select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+.card-form button { width: 100%; padding: 10px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+.producto-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+.producto-card h3 { font-size: 18px; color: #2c3e50; }
+.producto-card p { color: #7f8c8d; margin: 10px 0; font-size: 14px; }
+.producto-card input { width: 60px; padding: 5px; text-align: center; }
+.producto-card button { background: #18bc9c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+
+.carrito-item { display: flex; justify-content: space-between; background: white; padding: 15px; border-bottom: 1px solid #eee; }
+.btn-checkout { background: #e74c3c; color: white; border: none; padding: 15px 20px; width: 100%; font-size: 18px; cursor: pointer; margin-top: 20px; border-radius: 5px;}
+.btn-volver { background: #95a5a6; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px;}
+.error-msg { color: #e74c3c; font-size: 14px; margin-top: 10px;}
