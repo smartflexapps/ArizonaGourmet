@@ -1,0 +1,14 @@
+function obtenerConfiguracionWeb() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const configSheet = ss.getSheetByName('CONFIGURACIONWEB');
+  const configData = configSheet.getDataRange().getValues();
+  for (let i = 1; i < configData.length; i++) {
+    const webNombre = (configData[i][1] || '').toString().trim();
+    const url = (configData[i][4] || '').toString().trim();
+    const emailNotifications = (configData[i][5] || '').toString().trim();
+    if (webNombre || emailNotifications || url) {
+      return { webNombre, webUrl: url, emailNotifications };
+    }
+  }
+  return { webNombre: 'Sistema de Pedidos', webUrl: '', emailNotifications: '' };
+}
