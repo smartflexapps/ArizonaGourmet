@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos Web</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header id="navbar" class="hidden">
+        <h2 id="logo">🛒 PedidosWeb</h2>
+        <div class="nav-links">
+            <span id="user-info">Hola, Usuario</span>
+            <button onclick="mostrarPantalla('carrito')">🛒 Carrito (<span id="cart-count">0</span>)</button>
+            <button onclick="cerrarSesion()">Salir</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- PANTALLA: LOGIN -->
+        <section id="pantalla-login" class="pantalla">
+            <div class="card-form">
+                <h2>Iniciar Sesión</h2>
+                <input type="email" id="login-email" placeholder="Correo electrónico">
+                <input type="password" id="login-pass" placeholder="Contraseña">
+                <button onclick="hacerLogin()">Ingresar</button>
+                <p>¿No tienes cuenta? <a href="#" onclick="mostrarPantalla('registro')">Regístrate aquí</a></p>
+                <p id="login-error" class="error-msg"></p>
+            </div>
+        </section>
+
+        <!-- PANTALLA: REGISTRO -->
+        <section id="pantalla-registro" class="pantalla hidden">
+            <div class="card-form">
+                <h2>Nuevo Usuario</h2>
+                <input type="text" id="reg-nombre" placeholder="Nombre completo">
+                <input type="email" id="reg-email" placeholder="Correo electrónico">
+                <input type="password" id="reg-pass" placeholder="Contraseña">
+                <select id="reg-empresa" onchange="cargarAlmacenes()"><option>Seleccione Empresa...</option></select>
+                <select id="reg-almacen"><option>Seleccione Almacén...</option></select>
+                <button onclick="hacerRegistro()">Registrarse</button>
+                <p>¿Ya tienes cuenta? <a href="#" onclick="mostrarPantalla('login')">Inicia sesión</a></p>
+                <p id="reg-msg"></p>
+            </div>
+        </section>
+
+        <!-- PANTALLA: CATÁLOGO -->
+        <section id="pantalla-catalogo" class="pantalla hidden">
+            <h2>Catálogo de Productos</h2>
+            <button class="btn-volver" onclick="mostrarPantalla('catalogo')">Actualizar Catálogo</button>
+            <div id="grid-productos" class="grid">
+                <!-- Los productos se inyectan aquí con JS -->
+            </div>
+        </section>
+
+        <!-- PANTALLA: CARRITO -->
+        <section id="pantalla-carrito" class="pantalla hidden">
+            <h2>Tu Carrito de Pedidos</h2>
+            <button class="btn-volver" onclick="mostrarPantalla('catalogo')">← Volver al Catálogo</button>
+            <div id="lista-carrito">
+                <!-- Items del carrito -->
+            </div>
+            <div class="carrito-footer">
+                <button class="btn-checkout" onclick="procesarPedido()">Confirmar Pedido</button>
+                <p id="checkout-msg"></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/mock-db.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
