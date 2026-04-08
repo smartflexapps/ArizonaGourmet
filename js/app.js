@@ -4,8 +4,8 @@ let carrito = [];
 
 // --- NAVEGACIÓN ---
 function mostrarPantalla(id) {
-    document.querySelectorAll('.pantalla').forEach(p => p.classList.add('oculto'));
-    document.getElementById(`pantalla-${id}`).classList.remove('oculto');
+    document.querySelectorAll('.pantalla').forEach(p => p.classList.add('hidden'));
+    document.getElementById(`pantalla-${id}`).classList.remove('hidden');
     
     if(id === 'catalogo') renderizarCatalogo();
     if(id === 'carrito') renderizarCarrito();
@@ -66,7 +66,7 @@ function hacerRegistro() {
     document.getElementById('reg-msg').innerHTML = "✅ Registro exitoso. <a href='#' onclick=\"mostrarPantalla('login')\">Inicia sesión</a>";
 }
 
-// --- LOGICA DEL CATÁLOGO CON TARJETAS CLICKEABLES ---
+// --- LOGICA DEL CATÁLOGO (Con la tarjeta clickeable) ---
 function renderizarCatalogo() {
     const contenedor = document.getElementById('grid-productos');
     contenedor.innerHTML = '';
@@ -80,29 +80,16 @@ function renderizarCatalogo() {
         else if (entidadWeb === 'SPRITZ') stock = prod.stTotal;
 
         if (stock > 0) {
-            // Diseño de tarjeta Tailwind (Botón gigante)
+            // Aquí está el cambio: cursor: pointer y onclick en toda la tarjeta
             contenedor.innerHTML += `
-                <div class="bg-white rounded-2xl shadow hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col border border-gray-100"
-                     onclick="agregarAlCarrito('${prod.id}', '${prod.nombre}', ${stock}, '${prod.unidad}')">
-                    
-                    <div class="p-5 flex-grow">
-                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${prod.cat}</span>
-                        <h3 class="text-xl font-bold text-gray-800 mt-1">${prod.nombre}</h3>
-                        <p class="text-sm text-gray-500 mt-2">Disponible: <span class="font-bold text-green-600">${stock} ${prod.unidad}</span></p>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 border-t border-gray-100 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm font-semibold text-gray-600">Cant:</label>
-                            <!-- event.stopPropagation() evita que al dar clic en el input, se ejecute el clic de toda la tarjeta -->
-                            <input type="number" id="cant-${prod.id}" value="1" min="1" max="${stock}" 
-                                   onclick="event.stopPropagation()" 
-                                   class="w-16 p-1 text-center border rounded-md shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        </div>
-                        <div class="bg-blue-100 text-blue-600 p-2 rounded-full">
-                            🛒
-                        </div>
-                    </div>
+                <div class="producto-card" style="cursor: pointer;" onclick="agregarAlCarrito('${prod.id}', '${prod.nombre}', ${stock}, '${prod.unidad}')">
+                    <h3>${prod.nombre}</h3>
+                    <p>Categoría: ${prod.cat}</p>
+                    <p>Stock: <b>${stock} ${prod.unidad}</b></p>
+                    <br>
+                    <label>Cant: </label>
+                    <input type="number" id="cant-${prod.id}" value="1" min="1" max="${stock}" onclick="event.stopPropagation()">
+                    <p style="font-size: 12px; color: #18bc9c; margin-top:10px;">(Clic en la tarjeta para agregar)</p>
                 </div>
             `;
         }
@@ -131,7 +118,7 @@ function renderizarCarrito() {
         lista.innerHTML += `
             <div class="carrito-item">
                 <span><b>${item.nombre}</b> - ${item.cantidad} ${item.unidad}</span>
-                <button style="background: red; color:white; border:none; padding:5px; border-radius:3px;" onclick="eliminarItem(${index})">X</button>
+                <button style="background: red; color:white; border:none; padding:5px; border-radius:3px; cursor: pointer;" onclick="eliminarItem(${index})">X</button>
             </div>
         `;
     });
@@ -143,13 +130,10 @@ function eliminarItem(index) {
     renderizarCarrito();
 }
 
-// --- PROCESAR PEDIDO (Simulación de tu procesarPedidoConLogin) ---
+// --- PROCESAR PEDIDO ---
 function procesarPedido() {
     if(carrito.length === 0) return alert("Agrega productos antes de confirmar.");
     
-    // Aquí es donde normalmente enviarías el objeto "carrito" a tu Apps Script usando google.script.run
-    
-    // Simulación de éxito
     document.getElementById('checkout-msg').innerText = "✅ ¡Procesando pedido...!";
     
     setTimeout(() => {
