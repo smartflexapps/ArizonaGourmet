@@ -4,8 +4,8 @@ let carrito = [];
 
 // --- NAVEGACIÓN ---
 function mostrarPantalla(id) {
-    document.querySelectorAll('.pantalla').forEach(p => p.classList.add('hidden'));
-    document.getElementById(`pantalla-${id}`).classList.remove('hidden');
+    document.querySelectorAll('.pantalla').forEach(p => p.classList.add('oculto'));
+    document.getElementById(`pantalla-${id}`).classList.remove('oculto');
     
     if(id === 'catalogo') renderizarCatalogo();
     if(id === 'carrito') renderizarCarrito();
@@ -66,12 +66,11 @@ function hacerRegistro() {
     document.getElementById('reg-msg').innerHTML = "✅ Registro exitoso. <a href='#' onclick=\"mostrarPantalla('login')\">Inicia sesión</a>";
 }
 
-// --- LOGICA DEL CATÁLOGO (Basada en tu función obtenerCatalogoProductos) ---
+// --- LOGICA DEL CATÁLOGO CON TARJETAS CLICKEABLES ---
 function renderizarCatalogo() {
     const contenedor = document.getElementById('grid-productos');
     contenedor.innerHTML = '';
 
-    // Simulando tu lógica de entidadWeb según la empresa del usuario
     let entidadWeb = usuarioActual.idEmpresa.startsWith('SPRI') ? 'SPRITZ' : (usuarioActual.idEmpresa.startsWith('ALF') ? 'CATERING' : 'GOURMET');
 
     DB.PRODUCTOS.forEach(prod => {
@@ -81,14 +80,29 @@ function renderizarCatalogo() {
         else if (entidadWeb === 'SPRITZ') stock = prod.stTotal;
 
         if (stock > 0) {
+            // Diseño de tarjeta Tailwind (Botón gigante)
             contenedor.innerHTML += `
-                <div class="producto-card">
-                    <h3>${prod.nombre}</h3>
-                    <p>Categoría: ${prod.cat}</p>
-                    <p>Stock disponible: <b>${stock} ${prod.unidad}</b></p>
-                    <input type="number" id="cant-${prod.id}" value="1" min="1" max="${stock}">
-                    <br>
-                    <button onclick="agregarAlCarrito('${prod.id}', '${prod.nombre}', ${stock}, '${prod.unidad}')">Añadir al Carrito</button>
+                <div class="bg-white rounded-2xl shadow hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col border border-gray-100"
+                     onclick="agregarAlCarrito('${prod.id}', '${prod.nombre}', ${stock}, '${prod.unidad}')">
+                    
+                    <div class="p-5 flex-grow">
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${prod.cat}</span>
+                        <h3 class="text-xl font-bold text-gray-800 mt-1">${prod.nombre}</h3>
+                        <p class="text-sm text-gray-500 mt-2">Disponible: <span class="font-bold text-green-600">${stock} ${prod.unidad}</span></p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 border-t border-gray-100 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-semibold text-gray-600">Cant:</label>
+                            <!-- event.stopPropagation() evita que al dar clic en el input, se ejecute el clic de toda la tarjeta -->
+                            <input type="number" id="cant-${prod.id}" value="1" min="1" max="${stock}" 
+                                   onclick="event.stopPropagation()" 
+                                   class="w-16 p-1 text-center border rounded-md shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        </div>
+                        <div class="bg-blue-100 text-blue-600 p-2 rounded-full">
+                            🛒
+                        </div>
+                    </div>
                 </div>
             `;
         }
